@@ -127,36 +127,18 @@ void selectCypher(){
 
 void getInputFile(){
     char fileinput[sizeOfInput];
-    int repeat = 0;
-
-    do {
-        printf("What is the input file name?\n");
-        scanf("%s", fileinput);
-        // fgets(fileinput, sizeOfInput, stdin);
-        // char * word;
-        // fileinput[strcspn(fileinput, "\n")] = 0;
-        // word = strtok(fileinput, " ");
-        // inputFileName = strcat(word,".txt");
-        inputFileName = fileinput;
-        printf("Input file name: %s \n", inputFileName);
-        repeat++;
-    } while(repeat < 0);
-    
+    printf("What is the input file name?\n");
+    scanf("%s", fileinput);
+    inputFileName = fileinput;
+    printf("Input file name: %s \n", inputFileName);
 }
 
 void getOutputFile(){
     char fileoutput[sizeOfInput];
-    int repeat = 0;
-
-    do {
-        printf("What is the output file name?\n");
-        scanf("%s", fileoutput);
-
-        outputFileName = fileoutput;
-        printf("Output file name: %s \n", outputFileName);
-        repeat++;
-    } while(repeat < 0);
-    
+    printf("What is the output file name?\n");
+    scanf("%s", fileoutput);
+    outputFileName = fileoutput;
+    printf("Output file name: %s %s \n", outputFileName, inputFileName);
 }
 
 void encryptCaesar(){
@@ -169,9 +151,43 @@ void encryptCaesar(){
 
     char *inputfile = inputFileName;
     FILE *fileinput = fopen(inputfile, "r");
-    printf("\nhere here \n");
-    printf("\n%s file input \n", inputFileName);
     //check if file exists
+    if (fileinput == NULL) {
+        printf("Error: can't find or open file.\n");
+        repeatProcess++;
+    } else{
+        char singleLine[sizeOfInput];
+        while (!feof(fileinput)){
+            fgets(singleLine, sizeOfInput, fileinput);
+            for (int i = 0; i < strlen(singleLine); i++){
+                if (isalpha(singleLine[i]) == 0){
+                    printf("%c is not an alphabet. \n", singleLine[i]);
+                } else {
+                    for (int j = 0; j < strlen(alphabets); j++){
+                        if (tolower(singleLine[i]) == alphabets[j]){
+                            int position  = (j + offSet) % 26;
+                            printf("%c is %c \n",singleLine[i], alphabets[position]);
+                            fprintf(fileinput,"%c \n", alphabets[position]);
+                        }
+                    }                
+                }
+            }
+        }
+    }
+    fclose(fileinput);
+    printf("encrypt using caesar done!\n");
+}
+
+void decryptCaeser(){
+    char *filename = outputFileName;
+    FILE *file = fopen(filename, "w");
+    for (int i=0; i < strlen(alphabets); i++){
+        fprintf(file,"%c -> %d\n", alphabets[i], offSet++);
+    }
+
+    fclose(file);
+
+    FILE *fileinput = fopen(inputFileName, "r");
     if (fileinput == NULL) {
         printf("Error: can't find or open file.\n");
         repeatProcess++;
@@ -186,51 +202,18 @@ void encryptCaesar(){
                 } else {
                     for (int j = 0; j < strlen(alphabets); j++){
                         if (tolower(singleLine[i]) == alphabets[j]){
-                            int position  = (j + offSet) % 26;
-                            printf("%c is is is %c \n",singleLine[i], alphabets[position]);
+                            int position  = (abs(j - offSet)) % 26;
+                            printf("%c is %c \n",singleLine[i], alphabets[position]);
                             fprintf(fileinput,"%c \n", alphabets[position]);
                             return;
                         }
                     }                
-                }
-            }
-        }
-    }
-    fclose(fileinput);
-    printf("encrypt and caesar compute done!\n");
-}
-
-void decryptCaeser(){
-    char *filename = outputFileName;
-    FILE *file = fopen(filename, "w");
-    for (int i=0; i < strlen(alphabets); i++){
-        fprintf(file,"%c -> %d\n", alphabets[i], offSet++);
-    }
-
-    fclose(file);
-
-    FILE *fileinput = fopen(inputFileName, "r"); // one line declaration
-    char singleLine[sizeOfInput];
-    while (!feof(fileinput)){
-        fgets(singleLine, sizeOfInput, fileinput);
-        // puts(singleLine); // display on cmd
-        for (int i = 0; i < strlen(singleLine); i++){
-            if (isalpha(singleLine[i]) == 0){
-                printf("%c is not an alphabet. \n", singleLine[i]);
-            } else {
-                for (int j = 0; j < strlen(alphabets); j++){
-                    if (tolower(singleLine[i]) == alphabets[j]){
-                        int position  = (abs(j - offSet)) % 26;
-                        printf("%c is %c \n",singleLine[i], alphabets[position]);
-                        fprintf(fileinput,"%c \n", alphabets[position]);
-                        return;
-                    }
                 }                
-            }
+            }                
         }
     }
     fclose(fileinput);
-    printf("decrypt and caesar compute done!\n");
+    printf("decrypt using caesar done!\n");
 }
 
 void swap(int *a, int *b) {
@@ -269,7 +252,7 @@ void encryptRandom(){
         for (int j = 0; j < 26; j++) {
             if((letters[index1]) == (letters[j])) {
                 int position = (j+offSet) % 26;
-                fprintf(file,"%s \n", letters[position]); // randomized with offset
+                fprintf(file,"%s \n", letters[position]);
             }
         }
     }
@@ -284,7 +267,7 @@ void encryptRandom(){
             if (isalpha(singleLine[i]) == 0){
                 printf("%c is not an alphabet. \n", singleLine[i]);
             } else {
-                for (int j = 0; j < 26; j++){ // loop through randomized array with alphabet
+                for (int j = 0; j < 26; j++){
                     if (i == j){
                         fprintf(fileinput,"%s \n", letters[j]);
                         return;
@@ -321,7 +304,7 @@ void decryptRandom() {
     fclose(fileinput);
 
     // compute the text as you read thru the rest of the file
-    FILE *file = fopen(inputFileName, "r");
+    FILE *file = fopen(outputFileName, "r");
     FILE *filename = fopen(outputFileName, "r");
     char singleLine2[sizeOfInput];
     while (!feof(file)){
@@ -330,7 +313,7 @@ void decryptRandom() {
             if (isalpha(singleLine2[i]) == 0){
                 printf("%c is not an alphabet. \n", singleLine2[i]);
             } else {
-                for (int j = 0; j < 26; j++){ // loop through new stored array
+                for (int j = 0; j < 26; j++){
                     if (i == j){
                         fprintf(filename,"%s \n", letters[j]);
                         return;
@@ -352,7 +335,5 @@ void chooseToContinue() {
     word = strtok(input1, " ");
     if ((strcmp(word,"N\n") == 0) || (strcmp(word,"NO\n") == 0) || (strcmp(word,"no\n") == 0) || (strcmp(word,"n\n") == 0)) {
         repeatProcess++;
-    } else {
-        repeatProcess = 0;
     }
 }
