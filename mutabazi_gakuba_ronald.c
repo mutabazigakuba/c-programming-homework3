@@ -138,7 +138,7 @@ void getOutputFile(){
     printf("What is the output file name?\n");
     scanf("%s", fileoutput);
     outputFileName = fileoutput;
-    printf("Output file name: %s %s \n", outputFileName, inputFileName);
+    printf("Output file name: %s \n", outputFileName);
 }
 
 void encryptCaesar(){
@@ -333,7 +333,9 @@ void chooseToContinue() {
     fgets(input1, sizeOfInput,stdin);
     char * word;
     word = strtok(input1, " ");
-    if ((strcmp(word,"N\n") == 0) || (strcmp(word,"NO\n") == 0) || (strcmp(word,"no\n") == 0) || (strcmp(word,"n\n") == 0)) {
+    while ((strcmp(word,"N\n") == 0) || (strcmp(word,"NO\n") == 0) || (strcmp(word,"no\n") == 0) || (strcmp(word,"n\n") == 0)) {
         repeatProcess++;
+        printf("herere");
+        return;
     }
 }
